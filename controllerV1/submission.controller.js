@@ -14,7 +14,6 @@ module.exports.submissionController = {
 
 async function updateSubmissionControl(req, res, next) {
     try {
-        
         const {
             id,
             title,
