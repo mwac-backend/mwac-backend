@@ -4,7 +4,12 @@ const { validateResult } = require('./../utils/validate_result');
 module.exports.submissionController = {
     updateSubmissionControl,
     getSubmissionControl,
-    deleteSubmissionControl
+    deleteSubmissionControl,
+    
+    // sub order
+    updateSubmission,
+    getSubmission,
+    deleteSubmission
 }
 
 async function updateSubmissionControl(req, res, next) {
@@ -26,8 +31,7 @@ async function updateSubmissionControl(req, res, next) {
             submissionControlStatusID,
             agencyID,
         } = req.body;
-        const { _id } = req.user || {};
-        const createBy = _id;
+        const { _id: createBy } = req.user || {};
 
         let result = await DB.query(`CALL spstd_api_submission_control_update(
             :p_id, 
@@ -112,8 +116,7 @@ async function deleteSubmissionControl(req, res, next) {
         const {
             id
         } = req.query;
-        const { _id } = req.user || {};
-        const createBy = _id;
+        const { id: createBy } = req.user || {};
 
         let result = await DB.query(`CALL spstd_api_submission_control_delete_by_id(
             :p_id,
@@ -132,5 +135,100 @@ async function deleteSubmissionControl(req, res, next) {
         error.statusCode = 500;
         error.message = e;
         next(e)
+    }
+}
+
+// order
+
+async function updateSubmission(req, res, next) { 
+    try {
+        
+        const {
+            id,
+            submissionControlID,
+            submissionStatusID,
+            agencyID,
+            dutyID,
+            remark
+        } = req.body;
+        const { id: createBy } = req.user || {};
+
+        const result = await DB.query(`CALL spstd_api_submission_update(
+            :p_id,
+            :p_submission_control_id,
+            :p_submission_status_id,
+            :p_agency_id,
+            :p_duty_id,
+            :p_remark,
+            :p_create_by
+        )`, {
+            replacements: {
+                p_id: id || null,
+                p_submission_control_id: submissionControlID || null,
+                p_submission_status_id: submissionStatusID || null,
+                p_agency_id: agencyID || null,
+                p_duty_id: dutyID || null,
+                p_remark: remark || null,
+                p_create_by: createBy || null
+            }
+        });
+        res.json(validateResult.query(result));
+    } catch (e) {
+        const error = Error();
+        error.statusCode = 500;
+        error.message = e;
+        next(error)
+    }
+}
+
+async function getSubmission(req, res, next) {
+    try {
+        
+        const {
+            submissionControlID
+        } = req.query;
+
+        let result = await DB.query(`CALL spstd_api_submission_select_by_submission_control_id(
+            :p_submission_control_id
+        )`, {
+            replacements: {
+                p_submission_control_id: submissionControlID || null
+            }
+        });
+
+        res.json(result);
+
+    } catch (error) {
+        const e = Error();
+        e.statusCode = 500;
+        e.message = error;
+        next(e);
+    }
+}
+
+async function deleteSubmission(req, res, next) {
+    try {
+        
+        const {
+            id
+        } = req.query
+        const { id: createBy } = req.user || {};
+
+        let result = await DB.query(`CALL spstd_api_submission_delete(
+            :p_id,
+            :p_create_by
+        )`, {
+            replacements: {
+                p_id: id || null,
+                p_create_by: createBy || null
+            }
+        });
+
+        res.json(validateResult.query(result));
+
+    } catch (error) {
+        const e = Error();
+        e.statusCode = 500;
+        next(e);
     }
 }

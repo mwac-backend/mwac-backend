@@ -56,8 +56,7 @@ async function createAccount(req, res, next) {
             phoneNumber,
             group_id
         } = req.body;
-        const { _id } = req.user || {}
-        const createBy = _id || null;
+        const { id: createBy } = req.user || {}
 
         const salt = await bcryptjs.genSalt(10);
         const hashedPassword = await bcryptjs.hash(password, salt);
