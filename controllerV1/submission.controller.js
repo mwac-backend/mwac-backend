@@ -7,7 +7,7 @@ module.exports.submissionController = {
     deleteSubmissionControl
 }
 
-async function updateSubmissionControl(req, res, next) {
+async function updateSubmissionControl(req, res, next) {   
     try {
         const {
             id,
@@ -27,8 +27,7 @@ async function updateSubmissionControl(req, res, next) {
         } = req.body;
         const { _id } = req.user || {};
         const createBy = _id;
-
-        let result = await DB.query(`CALL spstd_api_submission_control_update(
+                let result = await DB.query(`CALL spstd_api_submission_control_update(
             :p_id, 
             :p_title,
             :p_first_name,
