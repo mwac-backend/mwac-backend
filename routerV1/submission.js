@@ -4,9 +4,9 @@ const mainRouter = new express.Router();
 const { authValidation } = require('../middleware/auth.validation.middleware');
 const { submissionController } = require('../controllerV1/submission.controller');
 
-router.post('/order', submissionController.updateSubmissionControl);
-router.get('/order', submissionController.getSubmissionControl);
-router.delete('/order', submissionController.deleteSubmissionControl);
+router.post('/control', submissionController.updateSubmissionControl);
+router.get('/control', submissionController.getSubmissionControl);
+router.delete('/control', submissionController.deleteSubmissionControl);
 
 mainRouter.use(authValidation.validJWTNeeded, router)
 module.exports = mainRouter;

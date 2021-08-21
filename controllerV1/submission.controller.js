@@ -110,8 +110,7 @@ async function deleteSubmissionControl(req, res, next) {
         const {
             id
         } = req.query;
-        const { _id } = req.user || {};
-        const createBy = _id;
+        const { id: createBy } = req.user || {};
 
         let result = await DB.query(`CALL spstd_api_submission_control_delete_by_id(
             :p_id,
@@ -132,3 +131,5 @@ async function deleteSubmissionControl(req, res, next) {
         next(e)
     }
 }
+
+

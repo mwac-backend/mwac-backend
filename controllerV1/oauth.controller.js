@@ -3,7 +3,7 @@ const bcryptjs = require('bcryptjs');
 const {validateResult} = require('../utils/validate_result')
 module.exports.oauthController = {
     login,
-    createAccount
+    updateAccount
 }
 
 async function login(req, res, next) {
@@ -38,26 +38,21 @@ async function login(req, res, next) {
 }
 
 
-async function createAccount(req, res, next) {
+async function updateAccount(req, res, next) {
     try {
         
         const {
             id,
             username,
             password,
-            citizenID,
-            titleNameTH,
-            firstNameTH,
-            lastNameTH,
-            titleNameEN,
-            firstNameEN,
-            lastNameEN,
-            dob,
+            title,
+            name,
+            surname,
+            email,
             phoneNumber,
-            group_id
+            groupID
         } = req.body;
-        const { _id } = req.user || {}
-        const createBy = _id || null;
+        const { id: createBy } = req.user || {}
 
         const salt = await bcryptjs.genSalt(10);
         const hashedPassword = await bcryptjs.hash(password, salt);
@@ -66,33 +61,25 @@ async function createAccount(req, res, next) {
             :p_id, 
             :p_username,
             :p_password, 
-            :p_citizen_id,
-            :p_title_name_th,
-            :p_first_name_th,
-            :p_last_name_th,
-            :p_title_name_en,
-            :p_first_name_en,
-            :p_last_name_en,
-            :p_dob,
+            :p_title,
+            :p_name,
+            :p_surname,
+            :p_email,
             :p_phone_number,
             :p_group_id,
             :p_create_by
         )`, {
             replacements: {
-                p_id: id || null, 
+                p_id: id || null,
                 p_username: username || null,
                 p_password: hashedPassword || null, 
-                p_citizen_id: citizenID || null,
-                p_title_name_th: titleNameTH || null,
-                p_first_name_th: firstNameTH || null,
-                p_last_name_th: lastNameTH || null,
-                p_title_name_en: titleNameEN || null,
-                p_first_name_en: firstNameEN || null,
-                p_last_name_en: lastNameEN || null,
-                p_dob: dob || null,
+                p_title: title || null,
+                p_name: name || null,
+                p_surname: surname || null,
+                p_email: email || null,
                 p_phone_number: phoneNumber || null,
-                p_group_id: group_id || null,
-                p_create_by: createBy || null,
+                p_group_id: groupID || null,
+                p_create_by: createBy || null
             }
         });
 
