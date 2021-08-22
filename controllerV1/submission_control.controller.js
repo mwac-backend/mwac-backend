@@ -1,5 +1,5 @@
 const { DB } = require('../database');
-const { validateResult } = require('./../utils/validate_result');
+const { validateResult } = require('../utils/validate_result');
 
 module.exports.submissionController = {
     updateSubmissionControl,
