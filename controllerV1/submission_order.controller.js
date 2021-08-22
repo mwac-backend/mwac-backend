@@ -41,8 +41,7 @@ async function updateSubmissionOrder(req, res, next) {
             submissionOrderStatusId,
             userId,
             agencyId,
-            remark,
-            createBy
+            remark
         } = req.body;
         const { _id } = req.user || {};
         const createBy = _id;

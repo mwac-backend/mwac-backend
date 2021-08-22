@@ -7,7 +7,9 @@ module.exports.submissionController = {
     deleteSubmissionControl
 }
 
-async function updateSubmissionControl(req, res, next) {   
+
+
+async function updateSubmissionControl(req, res, next) {
     try {
         const {
             id,
@@ -27,7 +29,7 @@ async function updateSubmissionControl(req, res, next) {
         } = req.body;
         const { _id } = req.user || {};
         const createBy = _id;
-                let result = await DB.query(`CALL spstd_api_submission_control_update(
+        let result = await DB.query(`CALL spstd_api_submission_control_update(
             :p_id, 
             :p_title,
             :p_first_name,
@@ -76,21 +78,19 @@ async function getSubmissionControl(req, res, next) {
     try {
 
         const {
+            agencyId,
             startDate,
-            endDate,
-            status
+            endDate
         } = req.query
-        
-
         let result = await DB.query(`CALL spstd_api_submission_control_select(
+            :p_agency_id,
             :p_start_date,
-            :p_end_date,
-            :p_status
+            :p_end_date
         )`, {
             replacements: {
+                p_agency_id: agencyId || null,
                 p_start_date: startDate || null,
-                p_end_date: endDate || null,
-                p_status: status || null
+                p_end_date: endDate || null
             }
         });
 
@@ -106,7 +106,7 @@ async function getSubmissionControl(req, res, next) {
 
 async function deleteSubmissionControl(req, res, next) {
     try {
-        
+
         const {
             id
         } = req.query;
@@ -118,7 +118,7 @@ async function deleteSubmissionControl(req, res, next) {
         )`, {
             replacements: {
                 p_id: id || null,
-                p_create_by: createBy || null 
+                p_create_by: createBy || null
             }
         });
 
