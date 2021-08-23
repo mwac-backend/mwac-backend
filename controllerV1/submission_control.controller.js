@@ -1,16 +1,13 @@
 const { DB } = require('../database');
-const { validateResult } = require('./../utils/validate_result');
+const { validateResult } = require('../utils/validate_result');
 
 module.exports.submissionController = {
     updateSubmissionControl,
     getSubmissionControl,
-    deleteSubmissionControl,
-    
-    // sub order
-    updateSubmission,
-    getSubmission,
-    deleteSubmission
+    deleteSubmissionControl
 }
+
+
 
 async function updateSubmissionControl(req, res, next) {
     try {
@@ -30,8 +27,8 @@ async function updateSubmissionControl(req, res, next) {
             submissionControlStatusID,
             agencyID,
         } = req.body;
-        const { _id: createBy } = req.user || {};
-
+        const { _id } = req.user || {};
+        const createBy = _id;
         let result = await DB.query(`CALL spstd_api_submission_control_update(
             :p_id, 
             :p_title,
@@ -81,21 +78,19 @@ async function getSubmissionControl(req, res, next) {
     try {
 
         const {
+            agencyId,
             startDate,
-            endDate,
-            status
+            endDate
         } = req.query
-        
-
         let result = await DB.query(`CALL spstd_api_submission_control_select(
+            :p_agency_id,
             :p_start_date,
-            :p_end_date,
-            :p_status
+            :p_end_date
         )`, {
             replacements: {
+                p_agency_id: agencyId || null,
                 p_start_date: startDate || null,
-                p_end_date: endDate || null,
-                p_status: status || null
+                p_end_date: endDate || null
             }
         });
 
@@ -111,7 +106,7 @@ async function getSubmissionControl(req, res, next) {
 
 async function deleteSubmissionControl(req, res, next) {
     try {
-        
+
         const {
             id
         } = req.query;
@@ -123,7 +118,7 @@ async function deleteSubmissionControl(req, res, next) {
         )`, {
             replacements: {
                 p_id: id || null,
-                p_create_by: createBy || null 
+                p_create_by: createBy || null
             }
         });
 
@@ -137,97 +132,4 @@ async function deleteSubmissionControl(req, res, next) {
     }
 }
 
-// order
 
-async function updateSubmission(req, res, next) { 
-    try {
-        
-        const {
-            id,
-            submissionControlID,
-            submissionStatusID,
-            agencyID,
-            dutyID,
-            remark
-        } = req.body;
-        const { id: createBy } = req.user || {};
-
-        const result = await DB.query(`CALL spstd_api_submission_update(
-            :p_id,
-            :p_submission_control_id,
-            :p_submission_status_id,
-            :p_agency_id,
-            :p_duty_id,
-            :p_remark,
-            :p_create_by
-        )`, {
-            replacements: {
-                p_id: id || null,
-                p_submission_control_id: submissionControlID || null,
-                p_submission_status_id: submissionStatusID || null,
-                p_agency_id: agencyID || null,
-                p_duty_id: dutyID || null,
-                p_remark: remark || null,
-                p_create_by: createBy || null
-            }
-        });
-        res.json(validateResult.query(result));
-    } catch (e) {
-        const error = Error();
-        error.statusCode = 500;
-        error.message = e;
-        next(error)
-    }
-}
-
-async function getSubmission(req, res, next) {
-    try {
-        
-        const {
-            submissionControlID
-        } = req.query;
-
-        let result = await DB.query(`CALL spstd_api_submission_select_by_submission_control_id(
-            :p_submission_control_id
-        )`, {
-            replacements: {
-                p_submission_control_id: submissionControlID || null
-            }
-        });
-
-        res.json(result);
-
-    } catch (error) {
-        const e = Error();
-        e.statusCode = 500;
-        e.message = error;
-        next(e);
-    }
-}
-
-async function deleteSubmission(req, res, next) {
-    try {
-        
-        const {
-            id
-        } = req.query
-        const { id: createBy } = req.user || {};
-
-        let result = await DB.query(`CALL spstd_api_submission_delete(
-            :p_id,
-            :p_create_by
-        )`, {
-            replacements: {
-                p_id: id || null,
-                p_create_by: createBy || null
-            }
-        });
-
-        res.json(validateResult.query(result));
-
-    } catch (error) {
-        const e = Error();
-        e.statusCode = 500;
-        next(e);
-    }
-}

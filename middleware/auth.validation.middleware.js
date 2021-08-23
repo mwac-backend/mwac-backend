@@ -7,7 +7,8 @@ const {DB} = require('../database');
 const {DatabaseError} = require('sequelize');
 
 module.exports.authValidation = {
-    validJWTNeeded
+    validJWTNeeded,
+    validJWTSocketNeeded
 }
 
 passport.use(
@@ -57,4 +58,23 @@ async function validJWTNeeded(req, res, next) {
       return next();
     }
   })(req, res, next);
+}
+
+async function validJWTSocketNeeded(socket, next) {
+  try {
+    
+    const headers = socket.handshake.headers || {};
+
+
+
+  } catch (error) {
+    return next(socketErrorHandler(401, 'Unauthorized'))
+  }
+}
+
+function socketErrorHandler(statusCode, message) {
+  const err = new Error();
+  err.message = JSON.stringify({message, statusCode});
+  err.statusCode = statusCode || 400;
+  return err;
 }
