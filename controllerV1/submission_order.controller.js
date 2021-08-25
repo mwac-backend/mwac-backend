@@ -1,6 +1,6 @@
 const { DB } = require("../database");
 const { validateResult } = require("../utils/validate_result");
-
+const { v4: uuidv4 } = require("uuid");
 module.exports.submissionOrderController = {
     updateSubmissionOrder,
     deleteSubmissionOrder,
@@ -22,6 +22,19 @@ async function getSubmissionOrder(req, res, next) {
             }
         });
 
+        for (let index = 0; index < result.length; index++) {
+            var data = await DB.query(`CALL spstd_api_submission_order_document_select_by_sub_order_id(
+                :p_submission_order_id
+            )`, {
+                replacements: {
+                    p_submission_order_id: result[index].id || null
+                }
+            });
+
+            result[index].submissionOrderDocument = data || [];
+        }
+        
+
         res.json(result);
 
     } catch (e) {
@@ -39,12 +52,14 @@ async function updateSubmissionOrder(req, res, next) {
             groupUuid,
             submissionControlId,
             submissionOrderStatusId,
-            userId,
-            agencyId,
             remark
         } = req.body;
-        const { _id } = req.user || {};
+        const { _id } = req.user.id || {};
         const createBy = _id;
+        const userId = req.user.id || {};
+        const agencyId = req.user.agencyID || {};
+        const groupUuidCheck = groupUuid || uuidv4();
+        
 
         const result = await DB.query(`CALL spstd_api_submission_order_update(
             :p_id,
@@ -58,7 +73,7 @@ async function updateSubmissionOrder(req, res, next) {
         )`, {
             replacements: {
                 p_id: id || null,
-                p_group_uuid: groupUuid || null,
+                p_group_uuid: groupUuidCheck,
                 p_submission_control_id: submissionControlId || null,
                 p_submission_order_status_id: submissionOrderStatusId || null,
                 p_user_id: userId || null,
