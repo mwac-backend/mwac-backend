@@ -27,7 +27,7 @@ async function updateSubmissionControl(req, res, next) {
             submissionControlStatusID,
             agencyID,
         } = req.body;
-        const { _id } = req.user || {};
+        const { _id } = req.user.id || {};
         const createBy = _id;
         let result = await DB.query(`CALL spstd_api_submission_control_update(
             :p_id, 
@@ -78,10 +78,11 @@ async function getSubmissionControl(req, res, next) {
     try {
 
         const {
-            agencyId,
             startDate,
             endDate
         } = req.query
+
+        const agencyId = req.user.agencyID
         let result = await DB.query(`CALL spstd_api_submission_control_select(
             :p_agency_id,
             :p_start_date,
@@ -110,7 +111,7 @@ async function deleteSubmissionControl(req, res, next) {
         const {
             id
         } = req.query;
-        const { id: createBy } = req.user || {};
+        const { id: createBy } = req.user.id || {};
 
         let result = await DB.query(`CALL spstd_api_submission_control_delete_by_id(
             :p_id,
