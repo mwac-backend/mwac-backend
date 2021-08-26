@@ -5,11 +5,11 @@ const oauthRouter = require('./oauth');
 const userRouter = require('./users');
 const submissionRouter = require('./submission');
 const submissionOrderRouter = require('./submission_order')
-const agency = require('./agency');
+const generalRouter = require('./general')
 
 router.use('/oauth', oauthRouter);
 router.use('/user', userRouter);
 router.use('/submission', submissionRouter,submissionOrderRouter);
-router.use('/agency', agency);
+router.use('/', generalRouter);
 
 module.exports = router;
