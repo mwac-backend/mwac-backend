@@ -13,6 +13,20 @@ function notificationSocketController(io) {
         const user = socket.user;
         socket.emit('connect-info', socket.user);
 
+        socket.on('create-notification', async (data) => {
+
+            // socket.emit('on-create-notification')
+        });
+
+        socket.on('get-notifications', async (data) => {
+
+            // socket.emit('on-get-notifications')
+        });
+
+        socket.on('is-read-notifications', async (data) => {
+
+            // socket.emit('on-is-read-notifications')
+        })
 
     });
 }

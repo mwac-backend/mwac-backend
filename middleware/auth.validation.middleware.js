@@ -5,6 +5,7 @@ const ExtractJWT = passportJWT.ExtractJwt;
 const {jwtSecret} = require('../config/index');
 const {DB} = require('../database');
 const {DatabaseError} = require('sequelize');
+const jwt = require('jsonwebtoken');
 
 module.exports.authValidation = {
     validJWTNeeded,
@@ -65,10 +66,20 @@ async function validJWTSocketNeeded(socket, next) {
     
     const headers = socket.handshake.headers || {};
 
-
-
+    const token = `${headers['authorization']}`.replace('Bearer ', '').trim();
+    const { username } = jwt.verify(token, jwtSecret);
+    let userExistsResult = await DB.query(`CALL spstd_api_check_username(:p_username)`, {
+        replacements: {
+            p_username: username
+        }
+    });
+    userExistsResult = userExistsResult[0];
+    if(!userExistsResult) throw 'User is somthing wrong.'
+    userExistsResult.password = undefined;
+    socket.user = userExistsResult;
+    next();
   } catch (error) {
-    return next(socketErrorHandler(401, 'Unauthorized'))
+    return next(socketErrorHandler(401, error.message))
   }
 }
 
