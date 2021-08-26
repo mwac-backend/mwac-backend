@@ -13,6 +13,6 @@ function notificationSocketController(io) {
         const user = socket.user;
         socket.emit('connect-info', socket.user);
 
-
+        
     });
 }
