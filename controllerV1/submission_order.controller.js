@@ -52,12 +52,13 @@ async function updateSubmissionOrder(req, res, next) {
             groupUuid,
             submissionControlId,
             submissionOrderStatusId,
-            remark
+            remark,
+            userId,
+            agencyId
         } = req.body;
-        const { _id } = req.user.id || {};
-        const createBy = _id;
-        const userId = req.user.id || {};
-        const agencyId = req.user.agencyID || {};
+
+        const createBy = req.user.id || {};
+        // const agencyId = req.user.agencyID || {};
         const groupUuidCheck = groupUuid || uuidv4();
         
 
