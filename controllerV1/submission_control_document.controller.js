@@ -1,6 +1,6 @@
 const { DB } = require("../database");
 const { validateResult } = require("../utils/validate_result");
-const {pathMapping} =require("../utils/directory")
+const {pathMapping} =require("../utils/directory");
 module.exports.submissionControllerDocument = {
     updateControlSubmissionDocument,
     getControlSubmissionDocument,

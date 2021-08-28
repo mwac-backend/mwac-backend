@@ -1,6 +1,8 @@
 const { DB } = require("../database");
 const { validateResult } = require("../utils/validate_result");
 const { v4: uuidv4 } = require("uuid");
+const {pathMapping} =require("../utils/directory");
+
 module.exports.submissionOrderController = {
     updateSubmissionOrder,
     deleteSubmissionOrder,
@@ -30,6 +32,9 @@ async function getSubmissionOrder(req, res, next) {
                     p_submission_order_id: result[index].id || null
                 }
             });
+            data.forEach((e) => {
+                e.pathFile = pathMapping({shortPath: e.pathFile});
+              });
 
             result[index].submissionOrderDocument = data || [];
         }

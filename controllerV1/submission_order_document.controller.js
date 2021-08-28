@@ -1,5 +1,6 @@
 const { DB } = require("../database");
 const { validateResult } = require("../utils/validate_result");
+const {pathMapping} =require("../utils/directory");
 
 module.exports.submissionOrderDocument = {
     updateOrderDocument,
@@ -21,6 +22,9 @@ async function getOrderDocument(req, res, next) {
                 p_submission_order_id: submissionOrderId || null
             }
         });
+        result.forEach((e) => {
+            e.pathFile = pathMapping({shortPath: e.pathFile});
+          });
 
         res.json(result);
 
