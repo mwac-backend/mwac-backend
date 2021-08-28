@@ -7,7 +7,9 @@ const {  generalController} = require('../controllerV1/general.controller');
 router.get('/agency', generalController.getAgency);
 router.get('/submissionOrderStatus', generalController.getSubmissionOrderStatus);
 router.get('/submissionControlStatus', generalController.getSubmissionControlStatus);
+router.get('/mappingSubmissionControlStatus', generalController.getMappingSubmissionControlStatus);
 
 mainRouter.use(authValidation.validJWTNeeded ,router);
 
 module.exports = mainRouter;
+
