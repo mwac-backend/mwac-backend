@@ -48,8 +48,7 @@ async function updateControlSubmissionDocument(req, res, next) {
             remark,
             fileMiddleware,
         } = req.body;
-        const { _id } = req.user || {};
-        const createBy = _id;
+        const createBy = req.user.id || null;
 
 
         for (let i = 0; i < fileMiddleware.length; i++) {
@@ -93,8 +92,7 @@ async function deleteControlSubmissionDocument(req, res, next) {
         const {
             id
         } = req.query;
-        const { _id } = req.user || {};
-        const createBy = _id;
+        const createBy = req.user.id || null;
 
         let result = await DB.query(`CALL spstd_api_submission_control_document_delete_by_id(
             :p_id,
