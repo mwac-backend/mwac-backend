@@ -1,6 +1,6 @@
 const { DB } = require("../database");
 const { validateResult } = require("../utils/validate_result");
-
+const {pathMapping} =require("../utils/directory")
 module.exports.submissionControllerDocument = {
     updateControlSubmissionDocument,
     getControlSubmissionDocument,
@@ -22,6 +22,11 @@ async function getControlSubmissionDocument(req, res, next) {
                 p_submission_control_id: submissionControlId || null
             }
         });
+
+        result.forEach((e) => {
+            e.pathFile = pathMapping({shortPath: e.pathFile});
+          });
+
 
         res.json(result);
 

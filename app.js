@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
 app.use('/api/v1/', routeV1);
-app.use('/images', express.static(__dirname + "\\public\\data\\uploads"));
+app.use('/file_resource', express.static(__dirname + "\\public\\data\\uploads"));
 
 app.use(errorHandler);
 
