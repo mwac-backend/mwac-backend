@@ -25,7 +25,7 @@ async function updateSubmissionControl(req, res, next) {
             subDistrict,
             postcode,
             submissionControlStatusID,
-            agencyID,
+            agencyID
         } = req.body;
         const createBy = req.user.id || null;
         let result = await DB.query(`CALL spstd_api_submission_control_update(

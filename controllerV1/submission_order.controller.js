@@ -88,6 +88,19 @@ async function updateSubmissionOrder(req, res, next) {
                 p_create_by: createBy || null
             }
         });
+          
+        if(submissionOrderStatusId === 1){
+            const data = await DB.query(`CALL spstd_api_submission_control_status_update"(
+                :p_id int,
+                :p_submission_control_status_id int
+                )`, {
+                replacements: {
+                    p_id: id || null,
+                    p_submission_control_status_id: 2
+                }
+            });
+        }
+
 
         res.json(validateResult.query(result));
     } catch (e) {
