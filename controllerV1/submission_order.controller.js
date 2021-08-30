@@ -65,7 +65,7 @@ async function updateSubmissionOrder(req, res, next) {
         const createBy = req.user.id || {};
         // const agencyId = req.user.agencyID || {};
         const groupUuidCheck = groupUuid || uuidv4();
-        
+        const agencyIdCheck = agencyId || req.user.agencyID;
 
         const result = await DB.query(`CALL spstd_api_submission_order_update(
             :p_id,
@@ -83,7 +83,7 @@ async function updateSubmissionOrder(req, res, next) {
                 p_submission_control_id: submissionControlId || null,
                 p_submission_order_status_id: submissionOrderStatusId || null,
                 p_user_id: userId || null,
-                p_agency_id: agencyId || null,
+                p_agency_id: agencyIdCheck || null,
                 p_remark: remark || null,
                 p_create_by: createBy || null
             }
