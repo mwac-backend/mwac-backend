@@ -5,6 +5,7 @@ const { authValidation } = require('../middleware/auth.validation.middleware');
 const {  generalController} = require('../controllerV1/general.controller');
 
 router.get('/agency', generalController.getAgency);
+router.get('/listUserByAgency', generalController.getUserByAgency);
 router.get('/submissionOrderStatus', generalController.getSubmissionOrderStatus);
 router.get('/submissionControlStatus', generalController.getSubmissionControlStatus);
 router.get('/mappingSubmissionControlStatus', generalController.getMappingSubmissionControlStatus);
