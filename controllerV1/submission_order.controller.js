@@ -90,12 +90,12 @@ async function updateSubmissionOrder(req, res, next) {
         });
           
         if(submissionOrderStatusId === 1){
-            const data = await DB.query(`CALL spstd_api_submission_control_status_update"(
-                :p_id int,
-                :p_submission_control_status_id int
+            const data = await DB.query(`CALL spstd_api_submission_control_status_update(
+                :p_id,
+                :p_submission_control_status_id
                 )`, {
                 replacements: {
-                    p_id: id || null,
+                    p_id: submissionControlId || null,
                     p_submission_control_status_id: 2
                 }
             });
