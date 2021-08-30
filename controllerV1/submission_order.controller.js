@@ -102,7 +102,7 @@ async function updateSubmissionOrder(req, res, next) {
         }
 
 
-        res.json(validateResult.query(result));
+        res.json(result);
     } catch (e) {
         const error = Error();
         error.statusCode = 500;
