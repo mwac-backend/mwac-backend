@@ -4,7 +4,8 @@ const { validateResult } = require('../utils/validate_result');
 module.exports.submissionController = {
     updateSubmissionControl,
     getSubmissionControl,
-    deleteSubmissionControl
+    deleteSubmissionControl,
+    getSubmissionControlAll
 }
 
 
@@ -89,6 +90,32 @@ async function getSubmissionControl(req, res, next) {
         )`, {
             replacements: {
                 p_agency_id: agencyId || null,
+                p_start_date: startDate || null,
+                p_end_date: endDate || null
+            }
+        });
+
+        res.json(result);
+
+    } catch (e) {
+        const error = Error();
+        error.statusCode = 500;
+        error.message = e;
+        next(e)
+    }
+}
+
+async function getSubmissionControlAll(req, res, next) {
+    try {
+        const {
+            startDate,
+            endDate
+        } = req.query
+        let result = await DB.query(`CALL spstd_api_submission_control_select_all_petition(
+            :p_start_date,
+            :p_end_date
+        )`, {
+            replacements: {
                 p_start_date: startDate || null,
                 p_end_date: endDate || null
             }
