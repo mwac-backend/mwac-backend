@@ -6,7 +6,8 @@ module.exports.submissionController = {
     updateSubmissionControl,
     getSubmissionControl,
     deleteSubmissionControl,
-    getSubmissionControlAll
+    getSubmissionControlAll,
+    getSubmissionControlByID
 }
 
 
@@ -159,6 +160,48 @@ async function deleteSubmissionControl(req, res, next) {
         });
 
         res.json(validateResult.query(result));
+
+    } catch (e) {
+        const error = Error();
+        error.statusCode = 500;
+        error.message = e;
+        next(e)
+    }
+}
+
+async function getSubmissionControlByID(req, res, next) {
+    try {
+        const {
+            submissionControlId
+        } = req.query
+        let result = await DB.query(`CALL spstd_api_submission_control_select_by_id(
+            :submission_control_id
+        )`, {
+            replacements: {
+                submission_control_id: submissionControlId
+            }
+        });
+
+        result.forEach((data) => {
+            data.createByPhotoPath = pathMapping({shortPath: data.createByPhotoPath});
+          });
+
+          let document = await DB.query(`CALL spstd_api_submission_control_document_select_by_sub_control_id(
+            :p_submission_control_id
+        )`, {
+            replacements: {
+                p_submission_control_id: submissionControlId || null
+            }
+        });
+
+        document.forEach((e) => {
+            e.pathFile = pathMapping({shortPath: e.pathFile});
+            e.createByPhotoPath = pathMapping({shortPath: e.createByPhotoPath});
+          });
+
+          result[0].submissionControlDocument = document || [];
+          
+        res.json(result);
 
     } catch (e) {
         const error = Error();

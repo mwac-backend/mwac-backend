@@ -6,6 +6,7 @@ const {saveFileMiddleware} = require('../middleware/save_file.middleware');
 const {mappingSubmissionController} = require('./../controllerV1/mapping_submission.controller');
 
 router.post('/mapping', mappingSubmissionController.updateMappingSubmissionController);
+router.post('/update-status-mapping', mappingSubmissionController.updateStatusMappingSubmissionController);
 router.get('/list-agency-by-mapping', mappingSubmissionController.getListAgencyBySubmissionControl);
 router.get('/list-mapping-by-agency', mappingSubmissionController.getListMappingSubmissionControlByAgency);
 

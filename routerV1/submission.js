@@ -9,6 +9,7 @@ const {submissionControllerDocument} = require('./../controllerV1/submission_con
 router.post('/control', submissionController.updateSubmissionControl);
 router.get('/control', submissionController.getSubmissionControl);
 router.get('/control/all', submissionController.getSubmissionControlAll);
+router.get('/control/by-id', submissionController.getSubmissionControlByID);
 router.delete('/control', submissionController.deleteSubmissionControl);
 
 router.post('/control/document', saveFileMiddleware.saveFile([{name: 'pathFile', maxCount: 5}]), submissionControllerDocument.updateControlSubmissionDocument);

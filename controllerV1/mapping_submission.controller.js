@@ -5,7 +5,8 @@ const {pathMapping} =require("../utils/directory");
 module.exports.mappingSubmissionController = {
     updateMappingSubmissionController,
     getListAgencyBySubmissionControl,
-    getListMappingSubmissionControlByAgency
+    getListMappingSubmissionControlByAgency,
+    updateStatusMappingSubmissionController
 }
 
 async function updateMappingSubmissionController(req, res, next) {
@@ -36,6 +37,39 @@ async function updateMappingSubmissionController(req, res, next) {
             }
         });
 
+        res.json(validateResult.query(result));
+    } catch (e) {
+        const error = Error();
+        error.statusCode = 500;
+        error.message = e;
+        next(e)
+    }
+}
+
+async function updateStatusMappingSubmissionController(req, res, next) {
+    try {
+        const {
+            mappingID,
+            mappingStatus
+        } = req.body;
+        const createBy = req.user.id || null;
+        let result = await DB.query(`CALL spstd_api_agency_submission_control_mapping_update(
+            :p_id, 
+            :p_agency_id,
+            :p_submission_control_id,
+            :p_remark,
+            :p_agency_submission_control_status_id,
+            :p_create_by
+        )`, {
+            replacements: {
+                p_id: mappingID,
+                p_agency_id: null,
+                p_submission_control_id:  null,
+                p_remark: null,
+                p_agency_submission_control_status_id: mappingID,
+                p_create_by: createBy || null
+            }
+        });
         res.json(validateResult.query(result));
     } catch (e) {
         const error = Error();

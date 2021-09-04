@@ -38,6 +38,7 @@ async function getSubmissionOrder(req, res, next) {
               });
 
             result[index].createByPhotoPath = pathMapping({shortPath: result[index].createByPhotoPath});
+            result[index].userPhotoPath = pathMapping({shortPath: result[index].userPhotoPath});
             result[index].submissionOrderDocument = data || [];
         }
         
