@@ -101,6 +101,28 @@ async function updateSubmissionOrder(req, res, next) {
             });
         }
 
+        if(submissionOrderStatusId === 4){
+         
+                const mapping = await DB.query(`CALL spstd_api_agency_submission_control_mapping_update(
+                    :p_id, 
+                    :p_agency_id,
+                    :p_submission_control_id,
+                    :p_remark,
+                    :p_agency_submission_control_status_id,
+                    :p_create_by
+                )`, {
+                    replacements: {
+                        p_id: null,
+                        p_agency_id: agencyIdCheck || null,
+                        p_submission_control_id: submissionControlId || null,
+                        p_remark: remark || null,
+                        p_agency_submission_control_status_id: 1,
+                        p_create_by: createBy || null
+                    }
+                });
+        
+        }
+
 
         res.json(result);
     } catch (e) {
