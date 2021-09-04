@@ -61,7 +61,8 @@ async function updateSubmissionOrder(req, res, next) {
             submissionOrderStatusId,
             remark,
             userId,
-            agencyId
+            agencyId,
+            formID
         } = req.body;
 
         const createBy = req.user.id || {};
@@ -77,7 +78,8 @@ async function updateSubmissionOrder(req, res, next) {
             :p_user_id , 
             :p_agency_id ,
             :p_remark , 
-            :p_create_by 
+            :p_create_by,
+            :p_form_id 
         )`, {
             replacements: {
                 p_id: id || null,
@@ -87,7 +89,8 @@ async function updateSubmissionOrder(req, res, next) {
                 p_user_id: userId || null,
                 p_agency_id: agencyIdCheck || null,
                 p_remark: remark || null,
-                p_create_by: createBy || null
+                p_create_by: createBy || null,
+                p_form_id: formID || null
             }
         });
           
