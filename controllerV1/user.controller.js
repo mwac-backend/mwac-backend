@@ -1,5 +1,5 @@
 const { DB } = require('../database');
-
+const {pathMapping} =require("../utils/directory");
 module.exports.userController = {
     info
 }
@@ -13,8 +13,13 @@ async function info(req, res, next) {
                 p_group_id: groupID || null
             }
         });
+       req.user.permission = result;
+       req.user['photoPath'] = pathMapping({shortPath: req.user['photoPath'] });
 
-        req.user.permission = result;
+       req.user.permission.forEach(element => {
+        element.createByPhotoPath=pathMapping({shortPath: element.createByPhotoPath });
+       });
+
         res.json(req.user)
     } catch (e) {
         const error = Error();

@@ -24,6 +24,7 @@ async function getOrderDocument(req, res, next) {
         });
         result.forEach((e) => {
             e.pathFile = pathMapping({shortPath: e.pathFile});
+            e.createByPhotoPath = pathMapping({shortPath: e.createByPhotoPath});
           });
 
         res.json(result);

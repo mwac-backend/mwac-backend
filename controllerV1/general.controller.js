@@ -1,4 +1,5 @@
 const { DB } = require('../database');
+const {pathMapping} =require("../utils/directory");
 
 module.exports.generalController = {
     getAgency,
@@ -10,6 +11,12 @@ module.exports.generalController = {
 async function getAgency(req, res, next) {
     try {
         let result = await DB.query(`CALL spstd_api_agency_select()`);
+
+        result.forEach((e) => {
+            e.createByPhoto = pathMapping({shortPath: e.createByPhoto});
+          });
+
+
         res.json(result);
     } catch (e) {
         const error = Error();
@@ -31,6 +38,12 @@ async function getUserByAgency(req, res, next) {
                 p_agency_id: agencyId || null
             }
         });
+
+        result.forEach((e) => {
+            e.phtoPath = pathMapping({shortPath: e.phtoPath});
+          });
+          
+
         res.json(result);
     } catch (e) {
         const error = Error();
@@ -43,6 +56,10 @@ async function getUserByAgency(req, res, next) {
 async function getSubmissionOrderStatus(req, res, next) {
     try {
         let result = await DB.query(`CALL spstd_api_submission_order_status_select()`);
+        result.forEach((e) => {
+            e.createByPhotoPath = pathMapping({shortPath: e.createByPhotoPath});
+          });
+
         res.json(result);
     } catch (e) {
         const error = Error();
@@ -54,6 +71,11 @@ async function getSubmissionOrderStatus(req, res, next) {
 async function getSubmissionControlStatus(req, res, next) {
     try {
         let result = await DB.query(`CALL spstd_api_submission_control_status_select()`);
+
+        result.forEach((e) => {
+            e.createByPhotoPath = pathMapping({shortPath: e.createByPhotoPath});
+          });
+          
         res.json(result);
     } catch (e) {
         const error = Error();
@@ -66,6 +88,11 @@ async function getSubmissionControlStatus(req, res, next) {
 async function getMappingSubmissionControlStatus(req, res, next) {
     try {
         let result = await DB.query(`CALL spstd_api_agency_submission_control_status_select()`);
+
+        result.forEach((e) => {
+            e.createByPhotoPath = pathMapping({shortPath: e.createByPhotoPath});
+          });
+
         res.json(result);
     } catch (e) {
         const error = Error();

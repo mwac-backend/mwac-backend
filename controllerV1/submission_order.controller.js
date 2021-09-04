@@ -34,8 +34,10 @@ async function getSubmissionOrder(req, res, next) {
             });
             data.forEach((e) => {
                 e.pathFile = pathMapping({shortPath: e.pathFile});
+                e.createByPhotoPath = pathMapping({shortPath: e.createByPhotoPath});
               });
 
+            result[index].createByPhotoPath = pathMapping({shortPath: result[index].createByPhotoPath});
             result[index].submissionOrderDocument = data || [];
         }
         

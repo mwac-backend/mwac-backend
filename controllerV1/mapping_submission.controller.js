@@ -1,5 +1,6 @@
 const { DB } = require('../database');
 const { validateResult } = require('../utils/validate_result');
+const {pathMapping} =require("../utils/directory");
 
 module.exports.mappingSubmissionController = {
     updateMappingSubmissionController,
@@ -57,6 +58,7 @@ async function getListAgencyBySubmissionControl(req, res, next) {
                 p_submission_control_id: submissionControlId || null
             }
         });
+        
 
         res.json(result);
 
@@ -89,6 +91,10 @@ async function getListMappingSubmissionControlByAgency(req, res, next) {
             }
         });
 
+        result.forEach((e) => {
+            e.submssionControlCreateByPhotoPath = pathMapping({shortPath: e.submssionControlCreateByPhotoPath});
+          });
+          
         res.json(result);
 
     } catch (e) {

@@ -9,6 +9,5 @@ router.post('/mapping', mappingSubmissionController.updateMappingSubmissionContr
 router.get('/list-agency-by-mapping', mappingSubmissionController.getListAgencyBySubmissionControl);
 router.get('/list-mapping-by-agency', mappingSubmissionController.getListMappingSubmissionControlByAgency);
 
-
 mainRouter.use(authValidation.validJWTNeeded, router)
 module.exports = mainRouter;
