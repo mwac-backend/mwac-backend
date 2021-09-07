@@ -66,7 +66,7 @@ async function updateStatusMappingSubmissionController(req, res, next) {
                 p_agency_id: null,
                 p_submission_control_id:  null,
                 p_remark: null,
-                p_agency_submission_control_status_id: mappingID,
+                p_agency_submission_control_status_id: mappingStatus,
                 p_create_by: createBy || null
             }
         });
