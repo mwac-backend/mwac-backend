@@ -6,6 +6,7 @@ const {jwtSecret} = require('../config/index');
 const {DB} = require('../database');
 const {DatabaseError} = require('sequelize');
 const jwt = require('jsonwebtoken');
+const {pathMapping} = require("../utils/directory");
 
 module.exports.authValidation = {
     validJWTNeeded,
@@ -74,6 +75,11 @@ async function validJWTSocketNeeded(socket, next) {
         }
     });
     userExistsResult = userExistsResult[0];
+
+    if(userExistsResult.photoPath) {
+        userExistsResult.photoPath = pathMapping({shortPath: userExistsResult.photoPath})
+    }
+
     if(!userExistsResult) throw 'User is somthing wrong.'
     userExistsResult.password = undefined;
     socket.user = userExistsResult;
