@@ -6,7 +6,7 @@ function initSocketIO(server) {
 
     const io = require('socket.io')(server, {
         cors: {
-            origin: '*:*'
+            origin: '*'
         }
     });
     io.of('/').on('connection', (socket) => {
