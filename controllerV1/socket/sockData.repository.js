@@ -1,12 +1,11 @@
 const { DB } = require('../../database');
 const { v4: uuidv4 } = require('uuid');
 const { validateResult } = require('../../utils/validate_result');
+const {pathMapping} = require("../../utils/directory");
 
 module.exports.ScoketData = {
     // room
     getMemberByRoom,
-    getRoom,
-    updateRoom,
     deleteRoom,
 
     // message
@@ -29,57 +28,6 @@ async function getMemberByRoom({submissionControlID}) {
 
     } catch (error) {
         return []
-    }
-}
-
-async function getRoom({user}) {
-    try {
-        let { agencyID } = user;
-
-        let result = await DB.query(`CALL spstd_api_agency_submission_control_mapping_select(
-            :p_agency_id
-        )`, {
-            replacements: {
-                p_agency_id:agencyID || null
-            }
-        })
-
-        return result;
-
-    } catch (error) {
-        return [];
-    }
-}
-
-async function updateRoom({
-    id,
-    agencyID,
-    submissionControlID,
-    remark,
-    user
-}) {
-    try {
-        let { id: createBy } = user || {};
-
-        let result = await DB.query(`CALL spstd_api_agency_submission_control_mapping_update(
-            :p_id,
-            :p_agency_id,
-            :p_submission_control_id,
-            :p_remark,
-            :p_create_by
-        )`, {
-            replacements: {
-                p_id: id || null,
-                p_agency_id: agencyID || null,
-                p_submission_control_id: submissionControlID || null,
-                p_remark: remark || null,
-                p_create_by: createBy || null
-            }
-        })
-
-        return validateResult.query(result);
-    } catch (error) {
-        return null;  
     }
 }
 
@@ -121,6 +69,9 @@ async function getMessageByRoom({submissionControlID, startDate, endDate}) {
                 p_end_date: endDate || null
             }
         });
+        result.forEach(n => {
+            n.createByPhotoPath = pathMapping({shortPath: n.createByPhotoPath})
+        })
 
         return result;
     } catch (error) {
@@ -128,7 +79,7 @@ async function getMessageByRoom({submissionControlID, startDate, endDate}) {
     }
 }
 
-async function saveMessage({data, user}) {
+async function saveMessage({data, user, submissionControlID}) {
     try {
         
         const { id: createBy } = user;
@@ -143,7 +94,7 @@ async function saveMessage({data, user}) {
         )`, {
             replacements: {
                 p_id: null,
-                p_submission_control_id: data.submissionControlID || null,
+                p_submission_control_id: submissionControlID || null,
                 p_parent_message_id: data.parentMessageID || null,
                 p_message: data.message || null,
                 p_message_type_id: data.messageTypeID || null,
@@ -151,7 +102,7 @@ async function saveMessage({data, user}) {
             }
         })
 
-        return validateResult.query(r);
+        return validateResult.query(r)
 
     } catch (error) {
         return null;
