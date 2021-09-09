@@ -6,12 +6,12 @@ function initSocketIO(server) {
 
     const io = require('socket.io')(server, {
         cors: {
-            origin: '*'
+            origin: '*:*'
         }
     });
-    // io.of('/test2').on('connection', (socket) => {
-    //     console.log("Connect");
-    // })
+    io.of('/').on('connection', (socket) => {
+        console.log("Connect");
+    })
     roomSocket.roomSocketController(io.of('/rooms'));
     chatSocket.chatSocketController(io.of('/chat'));
     notificationSocket.notificationSocketController(io.of('/notifications'));
