@@ -6,15 +6,16 @@ module.exports.generalController = {
     getSubmissionOrderStatus,
     getSubmissionControlStatus,
     getMappingSubmissionControlStatus,
-    getUserByAgency
+    getUserByAgency,
+    getCategoryPetition
 }
 async function getAgency(req, res, next) {
     try {
         let result = await DB.query(`CALL spstd_api_agency_select()`);
 
-        result.forEach((e) => {
-            e.createByPhoto = pathMapping({shortPath: e.createByPhoto});
-          });
+        // result.forEach((e) => {
+        //     e.createByPhoto = pathMapping({shortPath: e.createByPhoto});
+        //   });
 
 
         res.json(result);
@@ -92,6 +93,24 @@ async function getMappingSubmissionControlStatus(req, res, next) {
         result.forEach((e) => {
             e.createByPhotoPath = pathMapping({shortPath: e.createByPhotoPath});
           });
+
+        res.json(result);
+    } catch (e) {
+        const error = Error();
+        error.statusCode = 500;
+        error.message = e;
+        next(error);
+    }
+}
+
+async function getCategoryPetition(req, res, next) {
+    try {
+        let result = await DB.query(`CALL spstd_api_category_petition_select()`);
+
+        result.forEach((e) => {
+            e.createByPhoto = pathMapping({shortPath: e.createByPhoto});
+          });
+
 
         res.json(result);
     } catch (e) {

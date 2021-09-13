@@ -9,6 +9,7 @@ router.get('/listUserByAgency', generalController.getUserByAgency);
 router.get('/submissionOrderStatus', generalController.getSubmissionOrderStatus);
 router.get('/submissionControlStatus', generalController.getSubmissionControlStatus);
 router.get('/mappingSubmissionControlStatus', generalController.getMappingSubmissionControlStatus);
+router.get('/categoryPetition', generalController.getCategoryPetition);
 
 mainRouter.use(authValidation.validJWTNeeded ,router);
 

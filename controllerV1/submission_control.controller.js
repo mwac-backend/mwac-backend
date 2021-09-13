@@ -28,7 +28,8 @@ async function updateSubmissionControl(req, res, next) {
             subDistrict,
             postcode,
             submissionControlStatusID,
-            agencyID
+            agencyID,
+            fromID
         } = req.body;
         const createBy = req.user.id || null;
         let result = await DB.query(`CALL spstd_api_submission_control_update(
@@ -46,7 +47,8 @@ async function updateSubmissionControl(req, res, next) {
             :p_postcode,
             :p_submission_control_status_id,
             :p_agency_id,
-            :p_create_by
+            :p_create_by,
+            :p_from_id
         )`, {
             replacements: {
                 p_id: id || null,
@@ -64,6 +66,7 @@ async function updateSubmissionControl(req, res, next) {
                 p_submission_control_status_id: submissionControlStatusID || null,
                 p_agency_id: agencyID || null,
                 p_create_by: createBy || null,
+                p_from_id: fromID || null,
             }
         });
 
