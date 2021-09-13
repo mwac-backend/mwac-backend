@@ -10,7 +10,15 @@ module.exports.ScoketData = {
 
     // message
     getMessageByRoom,
-    saveMessage
+    saveMessage,
+
+    // notification
+    updateNotification,
+    getNotification,
+
+    // info
+    getAgencyBySubmissionControl,
+    getUserByAgencyID,
 }
 
 async function getMemberByRoom({submissionControlID}) {
@@ -106,5 +114,97 @@ async function saveMessage({data, user, submissionControlID}) {
 
     } catch (error) {
         return null;
+    }
+}
+
+async function getAgencyBySubmissionControl(submissionControlID) {
+    try {
+
+        const r = await DB.query(`CALL spstd_api_agency_select_by_submission_control_id(
+            :p_submission_control_id
+        )`, {
+            replacements: {
+                p_submission_control_id: submissionControlID || null
+            }
+        });
+
+        return r;
+    } catch (error) {
+        return [];
+    }
+}
+
+async function getUserByAgencyID(agencyID) {
+    try {
+
+        const r = await DB.query(`CALL spstd_api_users_select_by_agency_id(
+            :p_agency_id
+        )`, {
+            replacements: {
+                p_agency_id: agencyID || null
+            }
+        });
+
+        return r;
+
+    } catch (error) {
+        return [];
+    }
+}
+
+async function updateNotification({id, title, subTitle, remark, isRead, user, submissionControlID, agencyID, userID}) {
+    try {
+
+        const { id: createBy } = user;
+
+        const r = await DB.query(`CALL spstd_api_notification_submission_control_update(
+            :p_id,
+            :p_title,
+            :p_sub_title,
+            :p_remark,
+            :p_submission_control_id,
+            :p_user_id,
+            :p_agency_id,
+            :p_is_read,
+            :p_create_by
+        )`, {
+            replacements: {
+                p_id: id || null,
+                p_title: title || null,
+                p_sub_title: subTitle || null,
+                p_remark: remark || null,
+                p_submission_control_id: submissionControlID || null,
+                p_user_id: userID || null,
+                p_agency_id: agencyID || null,
+                p_is_read: isRead || null,
+                p_create_by: createBy || null
+            }
+        });
+
+        return validateResult.query(r);
+
+    } catch (error) {
+        return null;
+    }
+}
+
+async function getNotification({userID, startDate, endDate}) {
+    try {
+
+        const r = await DB.query(`CALL spstd_api_notification_submission_control_select_by_user_id(
+            :p_user_id,
+            :p_start_date,
+            :p_end_date
+        )`, {
+            replacements: {
+                p_user_id: userID || null,
+                p_start_date: startDate || null,
+                p_end_date: endDate || null
+            }
+        });
+
+        return r;
+    } catch (error) {
+        return [];
     }
 }
