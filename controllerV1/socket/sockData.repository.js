@@ -3,7 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 const { validateResult } = require('../../utils/validate_result');
 const {pathMapping} = require("../../utils/directory");
 
-module.exports.ScoketData = {
+module.exports.SocketData = {
     // room
     getMemberByRoom,
     deleteRoom,
@@ -15,6 +15,8 @@ module.exports.ScoketData = {
     // notification
     updateNotification,
     getNotification,
+    getLastSeenNotificationByUserID,
+    updateLastSeenNotificationByUserID,
 
     // info
     getAgencyBySubmissionControl,
@@ -184,6 +186,7 @@ async function updateNotification({id, title, subTitle, remark, isRead, user, su
         return validateResult.query(r);
 
     } catch (error) {
+        console.log(error)
         return null;
     }
 }
@@ -206,5 +209,44 @@ async function getNotification({userID, startDate, endDate}) {
         return r;
     } catch (error) {
         return [];
+    }
+}
+
+async function getLastSeenNotificationByUserID({userID}) {
+    try {
+        let r = await DB.query(`CALL spstd_api_notification_last_seen_select_by_user_id(
+            :p_user_id
+        )`, {
+            replacements: {
+                p_user_id: userID || null
+            }
+        });
+
+        r = r[0] || {};
+        if(r.lastSeen) return r.lastSeen
+        else return r;
+    } catch (error) {
+        return null;
+    }
+}
+
+async function updateLastSeenNotificationByUserID({userID}) {
+    try {
+
+        let r = await DB.query(`CALL spstd_api_notification_last_seen_update_by_user_id(
+            :p_user_id
+        )`, {
+            replacements: {
+                p_user_id: userID || null
+            }
+        });
+
+        r = r[0] || {};
+        return r;
+    } catch (error) {
+        return {
+            success: 0,
+            message: error
+        };
     }
 }

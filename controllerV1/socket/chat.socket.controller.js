@@ -1,4 +1,4 @@
-const { ScoketData } = require('./sockData.repository');
+const { SocketData } = require('./sockData.repository');
 const { authValidation } = require('../../middleware/auth.validation.middleware');
 
 module.exports.chatSocket = {
@@ -16,19 +16,19 @@ function chatSocketController(io) {
 
             socket.emit('connect-info', {...socket.user, ...socket.handshake.query});
 
-            const r = await ScoketData.getMessageByRoom({submissionControlID});
+            const r = await SocketData.getMessageByRoom({submissionControlID});
             io.in(submissionControlID).emit('on-get-message', r);
             io.in(submissionControlID).except(socket.id).emit('on-join', {...socket.user, ...socket.handshake.query});
 
             socket.on('get-message', async (data) => {
-                const r = await ScoketData.getMessageByRoom({submissionControlID});
+                const r = await SocketData.getMessageByRoom({submissionControlID});
                 io.in(submissionControlID).emit('on-get-message', r);
             });
 
             socket.on('send-message', async (data) => {
-                const r = await ScoketData.saveMessage({data, user, submissionControlID});
+                const r = await SocketData.saveMessage({data, user, submissionControlID});
                 io.emit('on-send-message', {...r});
-                const message = await ScoketData.getMessageByRoom({submissionControlID});
+                const message = await SocketData.getMessageByRoom({submissionControlID});
                 io.in(submissionControlID).except(socket.id).emit('on-get-message', message);
             })
 

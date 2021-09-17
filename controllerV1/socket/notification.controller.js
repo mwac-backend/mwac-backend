@@ -1,5 +1,5 @@
 // repository
-const {SocketData} = require("./socket_data");
+const {SocketData} = require("./sockData.repository");
 const { authValidation } = require('../../middleware/auth.validation.middleware');
 const { caching, cachingGet } = require('../../database');
 
@@ -13,7 +13,7 @@ function notificationSocketController(io) {
 
         const user = socket.user;
 
-        await setListAgency(user.agencyID, socket.id);
+        await setListAgency(user.agencyID, socket.id, user.id);
         socket.emit('connect-info', user);
 
         socket.on('create-notification', async (data) => {
@@ -23,7 +23,6 @@ function notificationSocketController(io) {
             // step 2
             // find agency in submission control
             const agencyList = await SocketData.getAgencyBySubmissionControl(submissionControlID);
-
             // step 2.2
             // find people in agency list
             for (let i = 0; i < agencyList.length; i++) {
@@ -34,10 +33,15 @@ function notificationSocketController(io) {
                 const listAgencySocketID = await getListAgency(agencyList[i].id);
                 // send notification
                 for (let n = 0; n < listAgencySocketID.length; n++) {
-                    socket.to(listAgencySocketID[n]).emit('on-create-notification', {
+
+                    // find last seen
+                    const lastSeen = await SocketData.getLastSeenNotificationByUserID({userID: listAgencySocketID[n].userID});
+
+                    socket.to(listAgencySocketID[n].socketID).emit('on-create-notification', {
                         title,
                         subTitle,
-                        remark
+                        remark,
+                        lastSeen
                     });
                 }
 
@@ -45,12 +49,14 @@ function notificationSocketController(io) {
                 // save notification every people in agency
                 for (let n = 0; n < userList.length; n++) {
                     const r = await SocketData.updateNotification({
+                        id: null,
                         title,
                         subTitle,
                         submissionControlID,
                         agencyID: agencyList[i].id,
                         userID: userList[n].id,
-                        remark
+                        remark,
+                        user
                     });
                 }
 
@@ -60,12 +66,19 @@ function notificationSocketController(io) {
 
         socket.on('get-notifications', async (data) => {
 
-            // socket.emit('on-get-notifications')
+            const lastSeen = await SocketData.getLastSeenNotificationByUserID({userID: user.id});
+
+            const notification = await SocketData.getNotification({userID: user.id});
+            socket.emit('on-get-notifications', {
+                lastSeen,
+                notification
+            })
         });
 
         socket.on('is-read-notifications', async (data) => {
+            const r = await SocketData.updateLastSeenNotificationByUserID({userID: user.id});
 
-            // socket.emit('on-is-read-notifications')
+            socket.emit('on-is-read-notifications', r);
         })
 
         socket.on('disconnect', async (data) => {
@@ -84,24 +97,23 @@ async function getListAgency(key) {
     }
 }
 
-async function setListAgency(key, value) {
+async function setListAgency(key, socketID, userID) {
     try {
         let listAgency = await cachingGet(key) || '[]';
         listAgency = JSON.parse(listAgency);
-        listAgency.push(value);
+        listAgency.push({socketID, userID});
         listAgency = JSON.stringify(listAgency);
-        console.log(listAgency)
         caching.set(key, listAgency);
     } catch (e) {
         console.log(e)
     }
 }
 
-async function delListAgencyBySocketID(key, value) {
+async function delListAgencyBySocketID(key, socketID) {
     try {
         let listAgency = await cachingGet(key) || '[]';
         listAgency = JSON.parse(listAgency);
-        listAgency = listAgency.filter(n => n !== value);
+        listAgency = listAgency.filter(n => n.socketID !== socketID);
         listAgency = JSON.stringify(listAgency);
         caching.set(key, listAgency);
     } catch (e) {
