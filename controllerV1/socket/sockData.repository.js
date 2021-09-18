@@ -223,8 +223,8 @@ async function getLastSeenNotificationByUserID({userID}) {
         });
 
         r = r[0] || {};
-        if(r.lastSeen) return r.lastSeen
-        else return r;
+        if(r.notificationCount) return r.notificationCount
+        else return 0;
     } catch (error) {
         return null;
     }

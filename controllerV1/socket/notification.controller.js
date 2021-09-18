@@ -35,13 +35,13 @@ function notificationSocketController(io) {
                 for (let n = 0; n < listAgencySocketID.length; n++) {
 
                     // find last seen
-                    const lastSeen = await SocketData.getLastSeenNotificationByUserID({userID: listAgencySocketID[n].userID});
+                    const notificationCount = await SocketData.getLastSeenNotificationByUserID({userID: listAgencySocketID[n].userID});
 
                     socket.to(listAgencySocketID[n].socketID).emit('on-create-notification', {
                         title,
                         subTitle,
                         remark,
-                        lastSeen
+                        notificationCount: parseInt(notificationCount) + 1
                     });
                 }
 
@@ -66,11 +66,11 @@ function notificationSocketController(io) {
 
         socket.on('get-notifications', async (data) => {
 
-            const lastSeen = await SocketData.getLastSeenNotificationByUserID({userID: user.id});
+            const notificationCount = await SocketData.getLastSeenNotificationByUserID({userID: user.id});
 
             const notification = await SocketData.getNotification({userID: user.id});
             socket.emit('on-get-notifications', {
-                lastSeen,
+                notificationCount,
                 notification
             })
         });
